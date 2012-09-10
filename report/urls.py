@@ -1,17 +1,17 @@
-from django.conf.urls import patterns, include, url
+# encoding=utf-8
+# maintainer: katembu
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.conf.urls import patterns, include, url
+from django.contrib import admin
+from report import views
+
+admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'report.views.home', name='home'),
-    # url(r'^report/', include('report.foo.urls')),
-
+    # Examples
+    url(r'^$', views.index),
+    url(r'^report/?$', views.index),
     # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^admin/', include(admin.site.urls)),
 )
