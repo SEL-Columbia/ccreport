@@ -14,7 +14,7 @@ def index(request):
     context = RequestContext(request)
     context.commcare_reports = CommcareReport.objects.all()
     context.title = _(u"Report Dashboard")
-    return render(request, "home.html", context)
+    return render(request, "home.html", context_instance=context)
     
 
 def login_greeter(request):

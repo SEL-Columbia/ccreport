@@ -4,17 +4,17 @@
 
 {% block content %}
 
-{% if report.count > 0 %}
+{% if commcare_reports.count > 0 %}
     <table class="table table-bordered">
      <tr>
+         <td>Name</td>
         <td>Dataset Id</td>
-        <td>Name</td>
         <td>Summary</td>
      </tr>   
     {% for report in commcare_reports %}
      <tr>
-        <td>{{ report.dataset_id }}</td>
         <td>{{ report.name }}</td>
+         <td>{{ report.dataset_id }}</td>
         <td></td>
      </tr>   
     {% endfor %}
