@@ -65,13 +65,6 @@ def count_submissions(report, field, method='count'):
     method is one of: '25%', '50%', '75%', 'count' (default),
                       'max', 'mean', 'min', 'std' '''
 
-    data = {'bamboo_url': get_bamboo_url(),
-            'dataset': Option.objects.get(key='bamboo_dataset',
-                                          report=report).value,}
-
-    if not all(data):
-        return False
-
     url = get_bamboo_dataset_summary_url(report)
     
     req = requests.get(url)
