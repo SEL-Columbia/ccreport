@@ -1,12 +1,15 @@
 # encoding=utf-8
-import StringIO
+
 import calendar
 
 import datetime
 import json
 import zipfile
-import httplib2
 import os
+import requests
+
+from requests.auth import HTTPDigestAuth
+from StringIO import StringIO
 
 
 class DownloadFailed(StandardError):
@@ -40,21 +43,6 @@ def get_option(report):
         raise ProjectUnconfigured(report)
 
 
-def get_data_from_url(url, username='', password=''):
-    """Fetches data from the given url, if username is supplied it will apply
-credentials with the given username and password.
-
-The return value is a tuple of (response, content), the first
-being and instance of the 'Response' class, the second being
-a string that contains the response entity body.
-    """
-    http = httplib2.Http()
-    if username != '':
-        http.add_credentials(username, password)
-    response, content = http.request(url)
-    return response, content
-
-
 def get_timestamp():
     """Returns unix timestamp"""
     d = datetime.datetime.now()
@@ -68,10 +56,10 @@ def download_commcare_zip_report(url, username, password):
     ZIPDIR = os.path.realpath(os.path.join(curdir, ZIPDIR))
     if not os.path.exists(ZIPDIR):
         os.mkdir(ZIPDIR)
-    response, content = get_data_from_url(url, username, password)
-    if response.status == 200 and\
-       response['content-type'] == 'application/zip':
-        zip_data = StringIO.StringIO(content)
+    response = requests.get(url, auth=HTTPDigestAuth(username, password))
+    if response.status_code == 200 and\
+       response.headers.get('content-type', '') == 'application/zip':
+        zip_data = StringIO(response.content)
         zf = zipfile.ZipFile(zip_data)
         path = os.path.join(ZIPDIR, '%s' % get_timestamp())
         if not os.path.exists(path):
