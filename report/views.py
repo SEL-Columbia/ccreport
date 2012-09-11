@@ -46,7 +46,7 @@ def refresh_dataset(request, report_pk):
             pass  # push the data to bamboo.io
             # TODO: delete csv file or cache
         else:
-            return HttpResponse(_(u"Unable to download report!%s") % settings.COMMCARE_USERNAME)
+            return HttpResponse(_(u"Unable to download report!"))
     if request.is_ajax():
         return HttpResponse(u"OK")
     else:
