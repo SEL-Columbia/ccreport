@@ -12,9 +12,10 @@
 		<meta name="keywords" content="{% block meta_keywords %}{% endblock %}" />
 
         <link rel="icon" type="image/png" href="{{ STATIC_URL }}favicon.png" />
-		<link rel="stylesheet" href="{{ STATIC_URL }}css/print.css" type="text/css" media="print" />
-		<link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" type="text/css" media="screen,projection" />
-		<link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap-responsive.min.css" type="text/css" media="screen,projection" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" type="text/css" media="screen,projection" rel="stylesheet">
+		<link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap-responsive.min.css" type="text/css" media="screen,projection" rel="stylesheet">
+		
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/print.css" type="text/css" media="print,screen,projection" rel="stylesheet">
 		<link rel="index" title="" href="" />
 
 		<!--[if lt IE 9 ]>
@@ -35,9 +36,23 @@
 				  </a>
 				  <a class="brand" href="#">CC Reports</a>
 				  <div class="nav-collapse collapse">
-				    <p class="navbar-text pull-right">
-				      Logged in as <a href="#" class="navbar-link">Username</a>
-				    </p>
+				        {% if user.is_authenticated %}
+				        <div class="btn-group pull-right">
+                            <a class="btn dropdown-toggle " data-toggle="dropdown" href="#">
+                             {{ user.username }}
+                            <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                            <!-- dropdown menu links -->
+                            <li class="active">
+                            <a href="#">Home</a>
+                            </li>
+                            <li><a href="#">...</a></li>
+                            <li><a href="#">...</a></li>
+                            </ul>
+                        </div>
+                        {% endif %}
+    
 				    <ul class="nav">
 				      <li class="active"><a href="#">Home</a></li>
 				      <li><a href="#about">About</a></li>
@@ -76,6 +91,8 @@
     <script src="{{ STATIC_URL }}bootstrap/js/bootstrap-collapse.js"></script>
     <script src="{{ STATIC_URL }}bootstrap/js/bootstrap-carousel.js"></script>
     <script src="{{ STATIC_URL }}bootstrap/js/bootstrap-typeahead.js"></script>
+    
+    
 
 	</body>
 

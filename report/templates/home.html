@@ -1,7 +1,25 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load mstag %}
 
 {% block content %}
 
+{% if report.count > 0 %}
+    <table class="table table-bordered">
+     <tr>
+        <td>Dataset Id</td>
+        <td>Name</td>
+        <td>Summary</td>
+     </tr>   
+    {% for report in report %}
+     <tr>
+        <td>{{ report.dataset_id }}</td>
+        <td>{{ report.name }}</td>
+        <td></td>
+     </tr>   
+    {% endfor %}
 
+    </table>
+{% endif %}
+    
 {% endblock %}

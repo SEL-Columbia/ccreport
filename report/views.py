@@ -10,12 +10,15 @@ from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponse, Http404
 from django.utils.translation import ugettext_lazy as _, ugettext
 
+from report.models import CommcareReportURL
 
 @login_required()
 def index(request):
     '''Landing page '''
     context = {'title': _(u"Report Dashboard")}
-
+    
+    context.update({'report': CommcareReportURL.objects.all()});
+    
     return render(request, "home.html", context)
     
 
