@@ -16,6 +16,11 @@ urlpatterns = patterns('',
     url(r'^login/$', 'report.views.login_greeter', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'template_name': 'logout.html', 'next_page': '/'}, name='logout'),
+    
+    #Single report summary
+    url(r'^summary/(?P<report_id>[^/]+)$', 
+        'report.views.report_summary', name='summary'),
+    
         
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

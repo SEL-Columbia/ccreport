@@ -14,6 +14,16 @@ register = template.Library()
 
 
 @register.simple_tag
+def mtitle(data):
+    return data.replace("_", " ")
+    
+'''
+@register.tag(name='dictkeys')
+def dictkeys(data):
+    retun data.keys()
+'''
+
+@register.simple_tag
 def summary(data):
     return count_submissions(data, '')
 

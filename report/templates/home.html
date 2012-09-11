@@ -14,8 +14,8 @@
     {% for report in report %}
      <tr>
         <td>{{ report.dataset_id }}</td>
-        <td>{{ report.name }}</td>
-        <td></td>
+        <td><a href="{% url summary report.pk %}">{{ report.name }}</a></td>
+        <td>{% summary report%}</td>
      </tr>   
     {% endfor %}
 
