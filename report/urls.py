@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     url(r'^login/$', 'report.views.login_greeter', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'template_name': 'logout.html', 'next_page': '/'}, name='logout'),
+    url(r'refresh-dataset/(?P<report_pk>\d+)/$',
+        'report.views.refresh_dataset', name='refresh-dataset'),
         
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

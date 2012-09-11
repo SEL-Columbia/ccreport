@@ -1,12 +1,18 @@
 # encoding=utf-8
 # maintainer: katembu
 
+from django.conf import settings
+from django.http import HttpResponseNotFound, HttpResponse, \
+    HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 from report.models import CommcareReport
+from report.utils import download_commcare_zip_report
+
 
 @login_required()
 def index(request):
@@ -23,3 +29,25 @@ def login_greeter(request):
     context = ''
     
     return login(request, template_name='login.html', extra_context=context)
+
+
+def refresh_dataset(request, report_pk):
+    # download the report csv data from commcare
+    try:
+        report = CommcareReport.objects.get(pk=report_pk)
+    except CommcareReport.DoesNotExist:
+        return HttpResponseNotFound(_(u"Error: Report Not found!"))
+    else:
+        csv_file = download_commcare_zip_report(
+            report.source_url,
+            username=settings.COMMCARE_USERNAME,
+            password=settings.COMMCARE_PASSWORD)
+        if csv_file is not None:
+            pass  # push the data to bamboo.io
+            # TODO: delete csv file or cache
+        else:
+            return HttpResponse(_(u"Unable to download report!%s") % settings.COMMCARE_USERNAME)
+    if request.is_ajax():
+        return HttpResponse(u"OK")
+    else:
+        return HttpResponseRedirect(reverse(index))

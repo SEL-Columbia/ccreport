@@ -10,12 +10,14 @@
          <td>Name</td>
         <td>Dataset Id</td>
         <td>Summary</td>
+         <td>&nbsp;</td>
      </tr>   
     {% for report in commcare_reports %}
      <tr>
         <td>{{ report.name }}</td>
          <td>{{ report.dataset_id }}</td>
         <td></td>
+         <td><a href="{% url refresh-dataset report.pk %}">Refresh Dataset</a></td>
      </tr>   
     {% endfor %}
 
