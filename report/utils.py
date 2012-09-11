@@ -63,7 +63,11 @@ def get_timestamp():
 
 def download_commcare_zip_report(url, username, password):
     """Downloads commcares csv exoorts given a commcare csv export url"""
-    ZIPDIR = "output"
+    ZIPDIR = "../output"
+    curdir = os.path.dirname(os.path.realpath(__file__))
+    ZIPDIR = os.path.realpath(os.path.join(curdir, ZIPDIR))
+    if not os.path.exists(ZIPDIR):
+        os.mkdir(ZIPDIR)
     response, content = get_data_from_url(url, username, password)
     if response.status == 200 and\
        response['content-type'] == 'application/zip':
