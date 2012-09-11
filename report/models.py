@@ -23,7 +23,7 @@ class Site(models.Model):
 		return self.name
 
 
-class CommcareReportURL(models.Model):
+class CommcareReport(models.Model):
 
 	class Meta:
 		app_label = "report"
@@ -64,3 +64,14 @@ class SitesUser(models.Model):
 
 	def __unicode__(self):
 		return self.user.username
+
+
+class ReportMetaData(models.Model):
+    class Meta:
+        app_label = 'main'
+        verbose_name = _(u"Report Metadata")
+        verbose_name_plural = _(u"Reports Metadata")
+
+    report = models.ForeignKey(CommcareReport)
+    key = models.CharField(verbose_name=_("Key"), max_length=50)
+    value = models.TextField(verbose_name=_("Value"))
