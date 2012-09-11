@@ -33,10 +33,9 @@ def load_json(json_str, object_hook=None):
 
 
 def get_option(report):
-    from report.models import CommcareReportURL
-    
+    from report.models import CommcareReport
     try:
-        return CommcareReportURL.objects.get(pk=report.pk).dataset_id
+        return CommcareReport.objects.get(pk=report.pk).dataset_id
     except:
         raise ProjectUnconfigured(report)
 
