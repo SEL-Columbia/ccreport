@@ -4,18 +4,19 @@
 
 {% block content %}
 
-{% if report.count > 0 %}
+{% if commcare_reports.count > 0 %}
     <table class="table table-bordered">
      <tr>
+         <td>Name</td>
         <td>Dataset Id</td>
-        <td>Name</td>
         <td>Summary</td>
+         <td>&nbsp;</td>
      </tr>   
-    {% for report in report %}
+    {% for report in commcare_reports %}
      <tr>
-        <td>{{ report.dataset_id }}</td>
         <td><a href="{% url summary report.pk %}">{{ report.name }}</a></td>
-        <td>{% summary report%}</td>
+         <td>{{ report.dataset_id }}</td>
+         <td><a href="{% url refresh-dataset report.pk %}">Refresh Dataset</a></td>
      </tr>   
     {% endfor %}
 

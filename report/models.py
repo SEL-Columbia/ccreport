@@ -23,12 +23,12 @@ class Site(models.Model):
 		return self.name
 
 
-class CommcareReportURL(models.Model):
+class CommcareReport(models.Model):
 
 	class Meta:
 		app_label = "report"
-        verbose_name = _(u"Commcare Template Url")
-        verbose_name_plural = _(u"Commcare Template Urls")
+        verbose_name = _(u"Commcare Report")
+        verbose_name_plural = _(u"Commcare Reports")
 
 	STATUS_ACTIVE = 1
 	STATUS_INACTIVE = 0
@@ -38,9 +38,9 @@ class CommcareReportURL(models.Model):
 
 	status = models.SmallIntegerField(_(u"Status"), choices=STATUS_CHOICES,
                                       default=STATUS_ACTIVE, db_index=True)
-	name = models.CharField(max_length = 100, verbose_name=_(u"Template Name"))
-	source_url = models.CharField(max_length = 100, 
-								  verbose_name=_(u"Commcare Report Url"))
+	name = models.CharField(max_length = 100, verbose_name=_(u"Report Name"))
+	source_url = models.CharField(max_length = 250,
+								  verbose_name=_(u"Report URL"))
 	dataset_id = models.CharField(max_length = 100, blank=True, null=True)
 	updated_on = models.DateTimeField(auto_now=True)
 	created_on = models.DateTimeField(_(u"Created on"), db_index=True, 
@@ -64,3 +64,14 @@ class SitesUser(models.Model):
 
 	def __unicode__(self):
 		return self.user.username
+
+
+class ReportMetaData(models.Model):
+    class Meta:
+        app_label = 'report'
+        verbose_name = _(u"Report Metadata")
+        verbose_name_plural = _(u"Reports Metadata")
+
+    report = models.ForeignKey(CommcareReport)
+    key = models.CharField(verbose_name=_("Key"), max_length=50)
+    value = models.TextField(verbose_name=_("Value"))
