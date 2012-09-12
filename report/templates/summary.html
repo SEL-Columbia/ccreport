@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load mstag %}
+
+{% block content %}
+
+
+<h5>{{ report.name }} </h5>
+    <form class="pull-right">
+        <select name="field_name" id="field_name">
+    {% for x in data_dict %}
+        <option value={{x}}>{% mtitle x %}</option>
+    {% endfor %}
+    </select>
+    </form></h5>
+<hr>
+
+<div class="row">
+<div class="span5">
+</div>
+<div class="container green">
+<div class="span7 ">
+CHART
+</div>
+</div>
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+  
+    var ds = "{{data_summary|escapejs}}";
+    var initial = $("#field_name").val();
+    //alert(initial)
+    ds = $.parseJSON(ds)
+    summary = ds[initial].summary 
+    change(summary);
+    
+
+    $('#field_name').live('change', function() {
+        var name = $(this).val();
+        summary = ds[name].summary
+        change(summary);
+    });
+    
+    function change(summary){
+        $('.span5').remove();
+        for(i in summary){
+            if (summary.hasOwnProperty(i)) {
+                $('.span5').append('<p><b>'+ i + '</b> '+ summary[i]+'<p>');
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}
+
