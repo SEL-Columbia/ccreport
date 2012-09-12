@@ -12,7 +12,8 @@ from django.utils.translation import ugettext as _
 
 from report.models import CommcareReport
 from report.utils import download_commcare_zip_report
-
+from report.bamboo import bamboo_query
+from report.utils import dump_json
 
 @login_required()
 def index(request):
@@ -51,3 +52,19 @@ def refresh_dataset(request, report_pk):
         return HttpResponse(u"OK")
     else:
         return HttpResponseRedirect(reverse(index))
+    
+
+@login_required()
+def report_summary(request, report_id):
+    
+    try:
+        report = CommcareReport.objects.get(pk=report_id)
+    except CommcareReport.DoesNotExist: 
+        pass
+
+    query = bamboo_query(report, as_summary=True)
+    context = {'report': report,
+               'data_dict': query,
+               'data_summary': dump_json(query)}
+    return render(request, "summary.html", context)
+
