@@ -4,7 +4,7 @@
 
 {% block content %}
 
-
+<link href="{{ STATIC_URL }}css/nv.d3.css" rel="stylesheet" type="text/css">
 <h5>{{ report.name }} </h5>
     <form class="pull-right">
         <select name="field_name" id="field_name">
@@ -20,27 +20,35 @@
 </div>
 <div class="container green">
 <div class="span7 ">
-CHART
+<svg id="draw1"></svg>
 </div>
 </div>
 </div>
 
+
+<script src="{{ STATIC_URL }}js/d3.v2.js"></script>
+<script src="{{ STATIC_URL }}js/nv.d3.js"></script>
+<script src="{{ STATIC_URL }}js/src/models/legend.js"></script>
+<script src="{{ STATIC_URL }}js/src/models/pieChart.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {
-  
     var ds = "{{data_summary|escapejs}}";
     var initial = $("#field_name").val();
+    var title = $("#field_name").text();
     //alert(initial)
     ds = $.parseJSON(ds)
     summary = ds[initial].summary 
     change(summary);
-
+    Draw_Piechart(title, summary)
 
     $('#field_name').live('change', function() {
         var name = $(this).val();
+        var title = $(this).text();
+        
         summary = ds[name].summary
         change(summary);
+        Draw_Piechart(title, summary)
     });
     
     function change(summary){
@@ -53,6 +61,46 @@ $(document).ready(function() {
     }
 });
 </script>
+<script> 
+function Draw_Piechart(title, summary){
+    
+    var status  = summary;
+    var jsonObj = []; 
 
+    for (var i in summary) {
+        jsonObj.push({"label": i, "value": summary[i]});
+    }
+    
+    data = [ 
+      {
+        key: title,
+        values: jsonObj
+      }
+    ];
+
+
+    nv.addGraph(function() {
+        var width = 500,
+            height = 500;
+
+        var chart = nv.models.pieChart()
+            .x(function(d) { return d.label })
+            .y(function(d) { return d.value })
+            .showLabels(false)
+            .color(d3.scale.category10().range())
+            .width(width)
+            .height(height);
+
+          d3.select("#draw1")
+              .datum(data)
+            .transition().duration(1200)
+              .attr('width', width)
+              .attr('height', height)
+              .call(chart);
+
+        return chart;
+    });
+}
+</script>
 {% endblock %}
 
