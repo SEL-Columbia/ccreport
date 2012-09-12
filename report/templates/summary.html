@@ -33,11 +33,9 @@ $(document).ready(function() {
     var initial = $("#field_name").val();
     //alert(initial)
     ds = $.parseJSON(ds)
-    console.log(ds)
     summary = ds[initial].summary 
     change(summary);
-    
-    console.log(summary)
+
 
     $('#field_name').live('change', function() {
         var name = $(this).val();
