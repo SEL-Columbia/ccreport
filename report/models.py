@@ -52,17 +52,15 @@ class CommcareReport(models.Model):
 
 
 class SitesUser(models.Model):
-
-	class Meta:
-		app_label = "report"
+    class Meta:
+        app_label = "report"
         verbose_name = _(u"User")
         verbose_name_plural = _(u"Users")
 
+    site = models.ForeignKey(Site, verbose_name=_(u"Assigned Site"))
+    user = models.ForeignKey(User, unique=True, verbose_name=_(u"User"))
 
-	site = models.ForeignKey(Site, verbose_name=_(u"Assigned Site"))
-	user = models.ForeignKey(User, unique=True, verbose_name=_(u"User"))
-
-	def __unicode__(self):
+    def __unicode__(self):
 		return self.user.username
 
 
@@ -75,3 +73,31 @@ class ReportMetaData(models.Model):
     report = models.ForeignKey(CommcareReport)
     key = models.CharField(verbose_name=_("Key"), max_length=50)
     value = models.TextField(verbose_name=_("Value"))
+
+
+class ReportCategory(models.Model):
+    class Meta:
+        app_label = 'report'
+        verbose_name = _(u"Report Category")
+        verbose_name_plural = _(u"Reports Categories")
+
+    site = models.ForeignKey(Site, verbose_name=_(u"Assigned Site"))
+    name = models.CharField(verbose_name=_("Key"), max_length=50)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Indicators(models.Model):
+    class Meta:
+        app_label = 'report'
+        verbose_name = _(u"Report Indicator")
+        verbose_name_plural = _(u"Reports Indicators")
+
+    name = models.CharField(verbose_name=_("Key"), max_length=50)
+    category = models.ForeignKey(ReportCategory)
+    report = models.ForeignKey(CommcareReport)
+    description = models.TextField(verbose_name=_("description"))
+
+    def __unicode__(self):
+        return "%s >> %s " % (self.category.name, self.name)
