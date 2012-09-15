@@ -36,7 +36,7 @@
 				    <span class="icon-bar"></span>
 				    <span class="icon-bar"></span>
 				  </a>
-				  <a class="brand" href="#">CC Reports</a>
+				  <a class="brand" href="{% url dashboard %}">CC Reports</a>
 				  <div class="nav-collapse collapse">
 				        {% if user.is_authenticated %}
 				        <div class="btn-group pull-right">
@@ -47,7 +47,7 @@
                             <ul class="dropdown-menu">
                             <!-- dropdown menu links -->
                             <li class="active">
-                            <a href="#">Home</a>
+                            <a href="{% url dashboard %}">Home</a>
                             </li>
                             <li><a href="#">...</a></li>
                             <li><a href="{% url logout next_page='/' %}">Sign Out</a></li>
@@ -56,7 +56,7 @@
                         {% endif %}
     
 				    <ul class="nav">
-				      <li class="active"><a href="#">Home</a></li>
+				      <li class="active"><a href="{% url dashboard %}">Home</a></li>
 				      <li><a href="#about">About</a></li>
 				      <li><a href="#contact">Contact</a></li>
 				    </ul>
@@ -71,7 +71,7 @@
       <hr>
       <footer>
         {% block footer %}
-				<p>&copy; Company 2012</p>
+				<p>&copy; Modi Research Group</p>
 		{% endblock %}
       </footer>
 

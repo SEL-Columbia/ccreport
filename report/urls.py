@@ -9,7 +9,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples
-    url(r'^$', views.index),
+    url(r'^$', views.index, name='dashboard'),
     url(r'^report/?$', views.index),
     
     
