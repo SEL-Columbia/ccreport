@@ -4,16 +4,19 @@
 from django.conf import settings
 from django.http import HttpResponseNotFound, HttpResponse, \
     HttpResponseRedirect
+from django.views.decorators.http import require_GET, require_POST
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
-from report.models import CommcareReport
+from report.models import CommcareReport, ReportMetaData
 from report.utils import download_commcare_zip_report
 from report.bamboo import bamboo_query
 from report.utils import dump_json
+import json
+
 
 @login_required()
 def index(request):
@@ -62,9 +65,40 @@ def report_summary(request, report_id):
     except CommcareReport.DoesNotExist: 
         pass
 
-    query = bamboo_query(report, as_summary=True)
+    #GET SELECT VALUES key
+    try:
+        select_values = ReportMetaData.objects.get(pk=report_id, 
+                                                   key='select_values')
+        select = True
+        query = bamboo_query(report, select=json.dumps(select_values.value),
+                             as_summary=True)
+    except ReportMetaData.DoesNotExist:
+        query = bamboo_query(report, as_summary=True)
+        select = False
+
+    print query
     context = {'report': report,
                'data_dict': query,
+               'select': select,
                'data_summary': dump_json(query)}
     return render(request, "summary.html", context)
 
+
+@require_POST        
+@login_required()
+def metadata(request, report_id):
+    try:
+        report = CommcareReport.objects.get(pk=report_id)
+    except CommcareReport.DoesNotExist: 
+        pass
+
+    fields = request.POST.getlist('select_fields')
+    d = { i: 1 for i in fields }
+
+    md = ReportMetaData()
+    md.report = report
+    md.key = 'select_values'
+    md.value = d
+    md.save()
+    
+    return HttpResponseRedirect("/summary/%s" % report_id)

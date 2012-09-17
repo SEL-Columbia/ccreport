@@ -3,11 +3,11 @@
 {% load mstag %}
 
 {% block content %}
-
+{% if select %}
 <link href="{{ STATIC_URL }}css/nv.d3.css" rel="stylesheet" type="text/css">
 <h5>{{ report.name }} </h5>
     <form class="pull-right">
-        <select name="field_name" id="field_name">
+    <select name="field_name" id="field_name">
     {% for x in data_dict %}
         <option value={{x}}>{% mtitle x %}</option>
     {% endfor %}
@@ -102,5 +102,23 @@ function Draw_Piechart(title, summary){
     });
 }
 </script>
+{% else %}
+<h4> {{ report.name }}{% trans ": Select Columns to Display" %}</h4>
+
+ <form action="{% url report.views.metadata report.pk %}" method="post">
+    {% csrf_token %}
+    <input name="metakey" type= "hidden" value="summary">
+    {% for x in data_dict %}
+        <label class="checkbox">
+         <input name="select_fields" type="checkbox" value={{x}}>
+        {% mtitle x %}
+        </label>
+    {% endfor %}
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{% trans "Save changes" %}</button>
+        <button type="button" class="btn">{% trans "Cancel" %}</button>
+    </div>
+</form>
+{% endif %}
 {% endblock %}
 
