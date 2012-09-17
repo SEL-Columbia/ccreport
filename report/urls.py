@@ -22,6 +22,7 @@ urlpatterns = patterns('',
         'report.views.report_summary', name='summary'),
     url(r'refresh-dataset/(?P<report_pk>\d+)/$',
         'report.views.refresh_dataset', name='refresh-dataset'),
+    url(r"report-meta/(?P<report_id>[^/]+)/$", 'report.views.metadata'),
         
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

@@ -94,10 +94,31 @@ class Indicators(models.Model):
         verbose_name = _(u"Report Indicator")
         verbose_name_plural = _(u"Reports Indicators")
 
-    name = models.CharField(verbose_name=_("Key"), max_length=50)
+    name = models.CharField(verbose_name=_("Name"), max_length=50)
     category = models.ForeignKey(ReportCategory)
     report = models.ForeignKey(CommcareReport)
     description = models.TextField(verbose_name=_("description"))
 
     def __unicode__(self):
         return "%s >> %s " % (self.category.name, self.name)
+
+class Calculation(models.Model):
+    class Meta:
+        app_label = 'report'
+        verbose_name = _(u"Report Calculation ")
+        verbose_name_plural = _(u"Reports Calculations")
+
+    CAL_SUM = 1
+    CAL_COUNT = 2
+    CALCULATION_CHOICES = ((CAL_SUM, _(u"Sum")),
+                            (CAL_COUNT, _(u"Count")))
+                                      
+    name = models.CharField(verbose_name=_("Name"), max_length=50)
+    report = models.ForeignKey(CommcareReport)
+    cal_type = models.SmallIntegerField(_(u"Calculation Type"), 
+                                      choices=CALCULATION_CHOICES,
+                                      db_index=True) 
+    query = models.TextField(verbose_name=_("query"))
+
+    def __unicode__(self):
+        return "%s" % self.name
