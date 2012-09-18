@@ -27,4 +27,8 @@ pip-log.txt
 .mr.developer.cfg
 
 settings_local.py
+local_settings.py
 report.db
+
+.idea
+.mysh
