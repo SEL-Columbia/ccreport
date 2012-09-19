@@ -17,6 +17,9 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'template_name': 'logout.html', 'next_page': '/'}, name='logout'),
 
+    url(r'^add-cc-report/?$', 'report.views.add_commcare_report',
+        name='add-cc-report'),
+
     #Single report summary
     url(r'^summary/(?P<report_id>[^/]+)$', 
         'report.views.report_summary', name='summary'),

@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
+from report.forms import CommcareReportForm
 
 from report.models import CommcareReport, ReportMetaData
 from report.utils import download_commcare_zip_report
@@ -102,3 +103,16 @@ def metadata(request, report_id):
     md.save()
     
     return HttpResponseRedirect("/summary/%s" % report_id)
+
+
+@login_required
+def add_commcare_report(request):
+    context = RequestContext(request)
+    form = CommcareReportForm()
+    if request.POST:
+        form = CommcareReportForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse(index))
+    context.form = form;
+    return render(request, "report-form.html", context_instance=context)

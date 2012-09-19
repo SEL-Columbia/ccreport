@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block page_title %}Add Commcare Report{% endblock %}
+
+{% block content %}
+
+<h1>Commcare Report</h1>
+{% if form.errors %}
+<p>{% trans "Errors in you form details." %}</p>
+{% endif %}
+
+<form method="post" action="{% url add-cc-report %}">
+{% csrf_token %}
+<table>
+    {{ form.as_table }}
+</table>
+
+<input type="submit" value="Add Report" class="btn btn-primary" />
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+{% endblock %}
