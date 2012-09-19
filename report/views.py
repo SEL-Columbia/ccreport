@@ -112,7 +112,14 @@ def add_commcare_report(request):
     if request.POST:
         form = CommcareReportForm(request.POST)
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse(index))
+            name = form.cleaned_data['name']
+            url = form.cleaned_data['source_url']
+            if not CommcareReport.objects.filter(
+                    name=name, source_url=url).count():
+                form.save()
+                return HttpResponseRedirect(reverse(index))
+            else:
+                context.error = _(u"There already exists a report with the"
+                                  u" same name and url!")
     context.form = form;
     return render(request, "report-form.html", context_instance=context)
