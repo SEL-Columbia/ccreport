@@ -60,3 +60,17 @@ class SiteTest(TestCase):
             response,
             u"There already exists a report with the same name and url!",
             status_code=200)
+
+    def test_dataset_refresh(self):
+        response = self._add_commcare_report()
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(CommcareReport.objects.count() > 0)
+        report = CommcareReport.objects.reverse()[0]
+        report.dataset_id = None
+        report.save()
+        url = reverse(views.refresh_dataset, kwargs={'report_pk': report.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        report = CommcareReport.objects.get(pk=report.pk)
+        self.assertIsNotNone(report.dataset_id)
+        self.assertIsNot(report.dataset_id, '')
