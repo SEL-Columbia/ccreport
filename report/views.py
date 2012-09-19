@@ -1,7 +1,9 @@
 # encoding=utf-8
 # maintainer: katembu
 import requests
+import json
 
+from requests.exceptions import ConnectionError
 from django.conf import settings
 from django.http import HttpResponseNotFound, HttpResponse, \
     HttpResponseRedirect
@@ -18,7 +20,6 @@ from report.utils import download_commcare_zip_report
 from report.bamboo import bamboo_query
 from report.utils import dump_json
 from report.indicators.MalariaIndicator import MalariaIndicator
-import json
 
 
 @login_required()
@@ -45,14 +46,23 @@ def refresh_dataset(request, report_pk):
     except CommcareReport.DoesNotExist:
         return HttpResponseNotFound(_(u"Error: Report Not found!"))
     else:
-        csv_file = download_commcare_zip_report(
-            report.source_url,
-            username=settings.COMMCARE_USERNAME,
-            password=settings.COMMCARE_PASSWORD)
+        try:
+            csv_file = download_commcare_zip_report(
+                report.source_url,
+                username=settings.COMMCARE_USERNAME,
+                password=settings.COMMCARE_PASSWORD)
+        except ConnectionError:
+            request.session['error_msg'] =\
+                _(u"Connection Error: Unable to download report from %s." %
+                  report.source_url)
         if csv_file is not None:
             # push the data to bamboo.io
             files = {"csv_file": ('data.csv', open(csv_file))}
-            r = requests.post(settings.BAMBOO_POST_URL, files=files)
+            try:
+                r = requests.post(settings.BAMBOO_POST_URL, files=files)
+            except ConnectionError:
+                request.session['error_msg'] = \
+                    _(u"Unable to connect to %s." % settings.BAMBOO_POST_URL)
             if r.status_code == 200:
                 content = json.loads(r.content)
                 report.dataset_id = content["id"]
