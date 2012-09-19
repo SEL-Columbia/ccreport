@@ -98,7 +98,7 @@ class Indicators(models.Model):
     category = models.ForeignKey(ReportCategory)
     report = models.ForeignKey(CommcareReport)
     description = models.TextField(verbose_name=_("description"))
-
+    
     def __unicode__(self):
         return "%s >> %s " % (self.category.name, self.name)
 

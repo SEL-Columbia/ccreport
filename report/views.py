@@ -17,6 +17,7 @@ from report.models import CommcareReport, ReportMetaData
 from report.utils import download_commcare_zip_report
 from report.bamboo import bamboo_query
 from report.utils import dump_json
+from report.indicators.MalariaIndicator import MalariaIndicator
 import json
 
 
@@ -130,3 +131,17 @@ def add_commcare_report(request):
                                   u" same name and url!")
     context.form = form;
     return render(request, "report-form.html", context_instance=context)
+
+        
+@login_required()
+def indicator(request, report_id):
+    print "Pass"
+    try:
+        report = CommcareReport.objects.get(pk=report_id)
+    except CommcareReport.DoesNotExist: 
+        pass
+
+    #GET SELECT VALUES key
+    m = MalariaIndicator(report)
+    context = {"mm": m.report_indicators()}
+    return render(request, "indicator.html", context)

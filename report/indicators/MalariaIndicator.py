@@ -106,8 +106,12 @@ class MalariaIndicator():
         recieved RDT test
         '''
         x = float(self.uncomplicatedfever_rdt())
-        x = float(self.fever())
-        return int(x/y*100)
+        y = float(self.fever())
+        try:
+            ans = int(x/y*100)
+        except:
+            ans = 0
+        return int(ans)
 
     def anti_malarial_indicator(self):
         '''
@@ -116,15 +120,38 @@ class MalariaIndicator():
         received antimalarial/ADT medication
         '''
         x = float(self.rdt_positive_antimalarial())
-        x = float(self.uncomplicatedfever_rdt_positive())
-        return int(x/y*100)
+        y = float(self.uncomplicatedfever_rdt_positive())
+        try:
+            ans = int(x/y*100)
+        except:
+            ans = 0
+        return int(ans)
 
-    def anti_malarial_indicator(self):
+    def fever_rdt_notavailable_indicator(self):
         '''
         A1
         Proportion of Under-5's with uncomplicated fever who did NOT
         receive RDT test due to 'RDT not available' with CHW
         '''
         x = float(self.uncomplicatedfever_rdt_notavailable())
-        x = float(self.fever())
-        return int(x/y*100)
+        y = float(self.fever())
+        try:
+            ans = int(x/y*100)
+        except:
+            ans = 0
+        return int(ans)
+   
+    def report_indicators(self):
+        return (
+        {
+            'title': _("Malaria"),
+            'columns': [
+                {'name': _("Uncomplicated fever/recieved RDT test"),
+                            'ind': self.fever_rdt_indicator()},
+                {'name': _("Positive RDT/Received Anti Malarial"), \
+                            'ind': self.anti_malarial_indicator()},
+                {'name': _("Uncomplicated/RDT not available"), \
+                            'ind': self.fever_rdt_notavailable_indicator()}
+            ]
+        },
+        )
