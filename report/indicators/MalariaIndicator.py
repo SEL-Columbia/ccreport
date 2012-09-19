@@ -128,3 +128,33 @@ class MalariaIndicator():
         x = float(self.uncomplicatedfever_rdt_notavailable())
         x = float(self.fever())
         return int(x/y*100)
+   
+    def report_indicators(self):
+        return (
+        {
+            'title': _("Malaria"),
+            'columns': [
+                {'name': _("Total HH Visits"),
+                            'ind': self.fever_rdt_indicator()},
+                {'name': _("% HH Coverage(30 days)"), \
+                            'ind': self.anti_malarial_indicator()},
+                {'name': _("% HH Coverage(90 days)"), \
+                            'ind': self.anti_malarial_indicator()}
+            ]
+        },
+        )
+
+    def xreport_indicators(self):
+        return (
+        {
+            'title': _("Malaria"),
+            'columns': [
+                {'name': _("Total HH Visits"),
+                            'ind': "moses"},
+                {'name': _("% HH Coverage(30 days)"), \
+                            'ind': "Kate"},
+                {'name': _("% HH Coverage(90 days)"), \
+                            'ind': "Sophia"}
+            ]
+        },
+        )

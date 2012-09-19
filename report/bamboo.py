@@ -112,6 +112,7 @@ def bamboo_query(report,
 
     req = requests.get(url, params=params)
 
+    print req.url
     # debugging
     if print_url:
         print(req.url)
