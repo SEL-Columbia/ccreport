@@ -161,6 +161,8 @@ LOGGING = {
 COMMCARE_PASSWORD = ''
 COMMCARE_USERNAME = ''
 
+BAMBOO_POST_URL = 'http://bamboo.io/datasets'
+
 try:
     from local_settings import *
 except ImportError:

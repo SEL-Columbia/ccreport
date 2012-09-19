@@ -1,5 +1,6 @@
 # encoding=utf-8
 # maintainer: katembu
+import requests
 
 from django.conf import settings
 from django.http import HttpResponseNotFound, HttpResponse, \
@@ -48,7 +49,13 @@ def refresh_dataset(request, report_pk):
             username=settings.COMMCARE_USERNAME,
             password=settings.COMMCARE_PASSWORD)
         if csv_file is not None:
-            pass  # push the data to bamboo.io
+            # push the data to bamboo.io
+            files = {"csv_file": ('data.csv', open(csv_file))}
+            r = requests.post(settings.BAMBOO_POST_URL, files=files)
+            if r.status_code == 200:
+                content = json.loads(r.content)
+                report.dataset_id = content["id"]
+                report.save()
             # TODO: delete csv file or cache
         else:
             return HttpResponse(_(u"Unable to download report!"))
