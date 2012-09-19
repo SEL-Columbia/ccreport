@@ -135,11 +135,10 @@ def add_commcare_report(request):
         
 @login_required()
 def indicator(request, report_id):
-    print "Pass"
     try:
         report = CommcareReport.objects.get(pk=report_id)
     except CommcareReport.DoesNotExist: 
-        pass
+        return HttpResponse(_(u"Report not available"))
 
     #GET SELECT VALUES key
     m = MalariaIndicator(report)
