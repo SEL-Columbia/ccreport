@@ -18,7 +18,13 @@
      </tr>   
     {% for report in commcare_reports %}
      <tr>
-        <td><a href="{% url summary report.pk %}">{{ report.name }}</a></td>
+        <td>
+            {% if report.dataset_id %}
+            <a href="{% url summary report.pk %}">{{ report.name }}</a>
+            {% else %}
+            {{ report.name }}
+            {% endif %}
+        </td>
          <td>{{ report.dataset_id }}</td>
          <td><a href="{% url refresh-dataset report.pk %}">Refresh Dataset</a></td>
      </tr>   
