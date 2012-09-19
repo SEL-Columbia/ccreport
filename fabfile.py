@@ -54,6 +54,7 @@ def deploy(deployment_name, branch='master'):
         run('pyclean .')
     run_in_virtualenv("pip install -r %s" % env.pip_requirements_file)
     with cd(env.code_src):
+        run_in_virtualenv("python manage.py syncdb")
         run_in_virtualenv("python manage.py migrate")
         run_in_virtualenv("python manage.py collectstatic --noinput")
     run('touch %s' % env.wsgi_config_file)
