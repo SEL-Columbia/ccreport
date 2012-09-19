@@ -66,7 +66,7 @@ class SiteTest(TestCase):
 
     def test_dataset_refresh(self):
         response = self._add_commcare_report()
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         self.assertTrue(CommcareReport.objects.count() > 0)
         report = CommcareReport.objects.reverse()[0]
         report.dataset_id = None
