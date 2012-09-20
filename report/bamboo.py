@@ -153,3 +153,10 @@ def bamboo_store_calculation(report, formula_name, formula):
         print(req.text)
         raise ErrorParsingBambooData(e.message)
 
+def bamboo_store_csv_file(csv_file, bamboo_url):
+    files = {"csv_file": ('data.csv', open(csv_file))}
+    req = requests.post(bamboo_url, files=files)
+    if not req.status_code in (200, 201, 202):
+        raise ErrorRetrievingBambooData(u"%d Status Code received."
+                                        % req.status_code)
+    return load_json(req.text)

@@ -1,7 +1,9 @@
 # encoding=utf-8
 # maintainer: katembu
 import requests
+import json
 
+from requests.exceptions import ConnectionError
 from django.conf import settings
 from django.http import HttpResponseNotFound, HttpResponse, \
     HttpResponseRedirect
@@ -15,7 +17,7 @@ from report.forms import CommcareReportForm
 
 from report.models import CommcareReport, ReportMetaData
 from report.utils import download_commcare_zip_report
-from report.bamboo import bamboo_query
+from report.bamboo import bamboo_query, bamboo_store_csv_file
 from report.utils import dump_json
 from report.indicators.MalariaIndicator import MalariaIndicator
 import json
@@ -46,17 +48,21 @@ def refresh_dataset(request, report_pk):
     except CommcareReport.DoesNotExist:
         return HttpResponseNotFound(_(u"Error: Report Not found!"))
     else:
-        csv_file = download_commcare_zip_report(
-            report.source_url,
-            username=settings.COMMCARE_USERNAME,
-            password=settings.COMMCARE_PASSWORD)
+        csv_file = None
+        try:
+            csv_file = download_commcare_zip_report(
+                report.source_url,
+                username=settings.COMMCARE_USERNAME,
+                password=settings.COMMCARE_PASSWORD)
+        except ConnectionError:
+            request.session['error_msg'] =\
+                _(u"Connection Error: Unable to download report from %s." %
+                  report.source_url)
         if csv_file is not None:
             # push the data to bamboo.io
-            files = {"csv_file": ('data.csv', open(csv_file))}
-            r = requests.post(settings.BAMBOO_POST_URL, files=files)
-            if r.status_code == 200:
-                content = json.loads(r.content)
-                report.dataset_id = content["id"]
+            data = bamboo_store_csv_file(csv_file, settings.BAMBOO_POST_URL)
+            if type(data) == dict:
+                report.dataset_id = data["id"]
                 report.save()
             # TODO: delete csv file or cache
         else:
