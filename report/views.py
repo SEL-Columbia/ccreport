@@ -17,7 +17,7 @@ from report.forms import CommcareReportForm
 
 from report.models import CommcareReport, ReportMetaData
 from report.utils import download_commcare_zip_report
-from report.bamboo import bamboo_query
+from report.bamboo import bamboo_query, bamboo_store_csv_file
 from report.utils import dump_json
 from report.indicators.MalariaIndicator import MalariaIndicator
 
@@ -46,6 +46,7 @@ def refresh_dataset(request, report_pk):
     except CommcareReport.DoesNotExist:
         return HttpResponseNotFound(_(u"Error: Report Not found!"))
     else:
+        csv_file = None
         try:
             csv_file = download_commcare_zip_report(
                 report.source_url,
@@ -57,15 +58,9 @@ def refresh_dataset(request, report_pk):
                   report.source_url)
         if csv_file is not None:
             # push the data to bamboo.io
-            files = {"csv_file": ('data.csv', open(csv_file))}
-            try:
-                r = requests.post(settings.BAMBOO_POST_URL, files=files)
-            except ConnectionError:
-                request.session['error_msg'] = \
-                    _(u"Unable to connect to %s." % settings.BAMBOO_POST_URL)
-            if r.status_code == 200:
-                content = json.loads(r.content)
-                report.dataset_id = content["id"]
+            data = bamboo_store_csv_file(csv_file, settings.BAMBOO_POST_URL)
+            if type(data) == dict:
+                report.dataset_id = data["id"]
                 report.save()
             # TODO: delete csv file or cache
         else:
