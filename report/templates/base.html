@@ -57,21 +57,6 @@
     
 				    <ul class="nav">
 				      <li class="active"><a href="{% url dashboard %}">Home</a></li>
-
-				        {% if user.is_authenticated %}
-				      <li class="dropdown">
-                        <a class="dropdown-toggle"
-                        data-toggle="dropdown"
-                        href="#">
-                        Indicators
-                        <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                        <!-- links -->
-                            <li class="active"> <a href="indicator/malaria">Malaria </a></li>
-                        </ul>
-				      </li>
-				      {% endif %}
 				      <li><a href="#contact">Contact</a></li>
 				    </ul>
 				  </div><!--/.nav-collapse -->
