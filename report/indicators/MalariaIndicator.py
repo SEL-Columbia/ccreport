@@ -12,6 +12,7 @@ Encounter Date = encounter_date
 '''
 
 from django.utils.translation import ugettext as _
+from indicator import Percentage
 from report.bamboo import *
 
 
@@ -101,9 +102,9 @@ class MalariaIndicator():
         Proportion of Under-5's with uncomplicated fever who recieved
         RDT test and were RDT positive
         '''
-        x = float(cls.uncomplicatedfever_rdt(report))
-        y = float(cls.uncomplicatedfever_rdt_positive(report))
-        return int(x / y * 100)
+        x = int(cls.uncomplicatedfever_rdt(report))
+        y = int(cls.uncomplicatedfever_rdt_positive(report))
+        return Percentage(x, y)
 
     @classmethod
     def fever_rdt_indicator(cls, report):
@@ -112,13 +113,13 @@ class MalariaIndicator():
         Proportion of Under-5's with uncomplicated fever who
         recieved RDT test
         '''
-        x = float(cls.uncomplicatedfever_rdt(report))
-        y = float(cls.fever(report))
+        x = int(cls.uncomplicatedfever_rdt(report))
+        y = int(cls.fever(report))
         try:
-            ans = int(x / y * 100)
+            ans = Percentage(x, y)
         except:
             ans = 0
-        return int(ans)
+        return ans
 
     @classmethod
     def anti_malarial_indicator(cls, report):
@@ -127,13 +128,13 @@ class MalariaIndicator():
         Proportion of Under-5's with positive RDT result who
         received antimalarial/ADT medication
         '''
-        x = float(cls.rdt_positive_antimalarial(report))
-        y = float(cls.uncomplicatedfever_rdt_positive(report))
+        x = int(cls.rdt_positive_antimalarial(report))
+        y = int(cls.uncomplicatedfever_rdt_positive(report))
         try:
-            ans = int(x / y * 100)
+            ans = Percentage(x, y)
         except:
             ans = 0
-        return int(ans)
+        return ans
 
     @classmethod
     def fever_rdt_notavailable_indicator(cls, report):
@@ -142,13 +143,13 @@ class MalariaIndicator():
         Proportion of Under-5's with uncomplicated fever who did NOT
         receive RDT test due to 'RDT not available' with CHW
         '''
-        x = float(cls.uncomplicatedfever_rdt_notavailable(report))
-        y = float(cls.fever(report))
+        x = int(cls.uncomplicatedfever_rdt_notavailable(report))
+        y = int(cls.fever(report))
         try:
-            ans = int(x / y * 100)
+            ans = Percentage(x, y)
         except:
             ans = 0
-        return int(ans)
+        return ans
 
     @classmethod
     def report_indicators(cls, report):
