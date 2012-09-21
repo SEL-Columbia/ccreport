@@ -11,7 +11,8 @@ urlpatterns = patterns('',
     # Examples
     url(r'^$', views.index, name='dashboard'),
     url(r'^report/?$', views.index),
-    url(r'^report/(?P<report_id>[^/]+)/$', 'report.views.report'),
+    url(r'^report/(?P<report_id>[^/]+)/$',
+        'report.views.report', name="report-overview"),
     url(r'^report/(?P<report_id>\d+)/indicator-remove/(?P<indicator>[^/]+)$',
         'report.views.remove_indicator_from_report', name="remove-indicator"),
 
