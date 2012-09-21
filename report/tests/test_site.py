@@ -85,3 +85,10 @@ class SiteTest(TestCase):
         self.assertIsNotNone(file_name)
         self.assertIn("output", file_name)
         self.assertTrue(file_name.endswith('#.csv'))
+
+    def test_report_view(self):
+        self._add_commcare_report_success()
+        report = CommcareReport.objects.reverse()[0]
+        url = reverse(views.report, kwargs={'report_id': report.pk})
+        response = self.client.get(url)
+        self.assertTrue(response.status_code == 200)
