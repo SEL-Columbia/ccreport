@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from report.forms import CommcareReportForm
-from report.indicators import get_indicator_list
+from report.indicators import get_indicator_list, generate_indicators
 
 from report.models import CommcareReport, ReportMetaData
 from report.utils import download_commcare_zip_report
@@ -169,8 +169,9 @@ def report(request, report_id):
     indicators = ReportMetaData.objects.filter(
         report=report, key="indicator").values_list('value', flat=True)
     indicator_list = get_indicator_list()
-    context.indicators = \
+    _indicators = \
         [item for item in indicator_list if item['name'] in indicators]
+    context.indicators = generate_indicators(_indicators, report)
     # do not include already assigned indicators
     indicator_list =\
         [item for item in indicator_list if item['name'] not in indicators]

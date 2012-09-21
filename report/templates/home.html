@@ -20,7 +20,7 @@
      <tr>
         <td>
             {% if report.dataset_id %}
-            <a href="{% url summary report.pk %}">{{ report.name }}</a>
+            <a href="{% url report-overview report.pk %}">{{ report.name }}</a>
             {% else %}
             {{ report.name }}
             {% endif %}
