@@ -11,17 +11,18 @@ RDT results = rdt_results
 Encounter Date = encounter_date
 '''
 
-from django.utils.translation import ugettext_lazy as _, ugettext
-from report.models import *
+from django.utils.translation import ugettext as _
 from report.bamboo import *
 
 
 class MalariaIndicator():
 
-    def __init__(self, report):
-        self.report = report
+    def __init__(self, report=None):
+        if report is not None:
+            self.report = report
 
-    def uncomplicatedfever_rdt(self):
+    @classmethod
+    def uncomplicatedfever_rdt(cls, report):
         '''
         A1
         Number of Under-5's with uncomplicated fever (no other danger signs)
@@ -29,13 +30,14 @@ class MalariaIndicator():
         '''
         query='{"danger_sign":"fever","$or":[{"rdt_result":"positive"},{"rdt_result":"negative"}]}'
         try:
-            ans = len(bamboo_query(self.report, query=query))
+            ans = len(bamboo_query(report, query=query))
         except:
             ans = 0
             
         return ans
 
-    def fever(self):
+    @classmethod
+    def fever(cls, report):
         '''
         A1
         Number of Under-5's with fever AND no other danger signs
@@ -43,13 +45,14 @@ class MalariaIndicator():
         query = '{"danger_sign":"fever"}'
         select = '{"danger_sign": 1}'
         try:
-            ans = len(bamboo_query(self.report, query=query))
+            ans = len(bamboo_query(report, query=query))
         except:
             ans = 0
             
         return ans
-        
-    def uncomplicatedfever_rdt_positive(self):
+
+    @classmethod
+    def uncomplicatedfever_rdt_positive(cls, report):
         '''
         A1
         Number of Under-5's with fever AND no other danger signs AND
@@ -57,101 +60,108 @@ class MalariaIndicator():
         '''
         query='{"danger_sign":"fever","rdt_result":"positive"}'
         try:
-            ans = len(bamboo_query(self.report, query=query))
+            ans = len(bamboo_query(report, query=query))
         except:
             ans = 0
             
         return ans
 
-    def rdt_positive_antimalarial(self):
+    @classmethod
+    def rdt_positive_antimalarial(cls, report):
         '''
         Number of Under-5's with positive RDT result AND received
         antimalarial/ACT medication
         '''        
         query='{"danger_sign":"fever","rdt_result":"positive"}'
         try:
-            ans = len(bamboo_query(self.report, query=query))
+            ans = len(bamboo_query(report, query=query))
         except:
             ans = 0
             
         return ans
 
-    def uncomplicatedfever_rdt_notavailable(self):
+    @classmethod
+    def uncomplicatedfever_rdt_notavailable(cls, report):
         '''
         Number of Under-5's with uncomplicated fever (no other danger signs) 
         AND 'RDT Not Available'
         '''
         query='{"danger_sign":"fever","rdt_result":"rdt_not_conducted"}'
         try:
-            ans = len(bamboo_query(self.report, query=query))
+            ans = len(bamboo_query(report, query=query))
         except:
             ans = 0
             
         return ans
-     
-    def fever_rdt_positive_indicator(self):
+
+    @classmethod
+    def fever_rdt_positive_indicator(cls, report):
         '''
         A1
         Proportion of Under-5's with uncomplicated fever who recieved
         RDT test and were RDT positive
         '''
-        x = float(self.uncomplicatedfever_rdt())
-        x = float(self.uncomplicatedfever_rdt_positive())
-        return int(x/y*100)
+        x = float(cls.uncomplicatedfever_rdt(report))
+        y = float(cls.uncomplicatedfever_rdt_positive(report))
+        return int(x / y * 100)
 
-    def fever_rdt_indicator(self):
+    @classmethod
+    def fever_rdt_indicator(cls, report):
         '''
         A1
         Proportion of Under-5's with uncomplicated fever who
         recieved RDT test
         '''
-        x = float(self.uncomplicatedfever_rdt())
-        y = float(self.fever())
+        x = float(cls.uncomplicatedfever_rdt(report))
+        y = float(cls.fever(report))
         try:
-            ans = int(x/y*100)
+            ans = int(x / y * 100)
         except:
             ans = 0
         return int(ans)
 
-    def anti_malarial_indicator(self):
+    @classmethod
+    def anti_malarial_indicator(cls, report):
         '''
         A1
         Proportion of Under-5's with positive RDT result who
         received antimalarial/ADT medication
         '''
-        x = float(self.rdt_positive_antimalarial())
-        y = float(self.uncomplicatedfever_rdt_positive())
+        x = float(cls.rdt_positive_antimalarial(report))
+        y = float(cls.uncomplicatedfever_rdt_positive(report))
         try:
-            ans = int(x/y*100)
+            ans = int(x / y * 100)
         except:
             ans = 0
         return int(ans)
 
-    def fever_rdt_notavailable_indicator(self):
+    @classmethod
+    def fever_rdt_notavailable_indicator(cls, report):
         '''
         A1
         Proportion of Under-5's with uncomplicated fever who did NOT
         receive RDT test due to 'RDT not available' with CHW
         '''
-        x = float(self.uncomplicatedfever_rdt_notavailable())
-        y = float(self.fever())
+        x = float(cls.uncomplicatedfever_rdt_notavailable(report))
+        y = float(cls.fever(report))
         try:
-            ans = int(x/y*100)
+            ans = int(x / y * 100)
         except:
             ans = 0
         return int(ans)
-   
-    def report_indicators(self):
+
+    @classmethod
+    def report_indicators(cls, report):
         return (
         {
             'title': _("Malaria"),
             'columns': [
                 {'name': _("Uncomplicated fever/recieved RDT test"),
-                            'ind': self.fever_rdt_indicator()},
+                            'ind': cls.fever_rdt_indicator(report)},
                 {'name': _("Positive RDT/Received Anti Malarial"), \
-                            'ind': self.anti_malarial_indicator()},
+                            'ind': cls.anti_malarial_indicator(report)},
                 {'name': _("Uncomplicated/RDT not available"), \
-                            'ind': self.fever_rdt_notavailable_indicator()}
+                            'ind': cls.fever_rdt_notavailable_indicator(report)}
             ]
         },
         )
