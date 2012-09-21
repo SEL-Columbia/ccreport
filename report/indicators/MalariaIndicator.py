@@ -96,7 +96,7 @@ class MalariaIndicator():
         RDT test and were RDT positive
         '''
         x = float(self.uncomplicatedfever_rdt())
-        x = float(self.uncomplicatedfever_rdt_positive())
+        y = float(self.uncomplicatedfever_rdt_positive())
         return int(x/y*100)
 
     def fever_rdt_indicator(self):
