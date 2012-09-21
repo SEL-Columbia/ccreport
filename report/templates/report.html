@@ -36,7 +36,7 @@
         <tr>
             <td>{{ indicator.description }}</td>
             <td>{{ indicator.data }}</td>
-            <td><a href="{% url remove-indicator report.pk indicator.name %}" class="btn btn-danger btn-mini">{% trans "Remove" %}</a></td>
+            <td><a href="{% url remove-indicator report.pk indicator.name %}" class="btn btn-danger btn-mini"><i class="icon-trash"></i>&nbsp;{% trans "Remove" %}</a></td>
         </tr>
         {% endfor %}
         </tbody>
