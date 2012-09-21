@@ -21,11 +21,24 @@
 </form>
 </div>
     {% if indicators %}
-        <ol>
+        <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th>Indicator</th>
+            <th>Value</th>
+            <th>#</th>
+        </tr>
+        </thead>
+        <tbody>
         {% for indicator in indicators %}
-            <li>{{ indicator.description }} <a href="{% url remove-indicator report.pk indicator.name %}" class="btn btn-danger btn-mini">{% trans "Remove" %}</a></li>
+        <tr>
+            <td>{{ indicator.description }}</td>
+            <td>{{ indicator.data }}</td>
+            <td><a href="{% url remove-indicator report.pk indicator.name %}" class="btn btn-danger btn-mini">{% trans "Remove" %}</a></td>
+        </tr>
         {% endfor %}
-        </ol>
+        </tbody>
+        </table>
     {% endif %}
 
 {% endif %}
