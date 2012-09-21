@@ -173,3 +173,13 @@ def report(request, report_id):
     context.indicator_list = indicator_list
     context.report = report
     return render(request, 'report.html', context_instance=context)
+
+
+@login_required
+def remove_indicator_from_report(request, report_id, indicator):
+    rpt = get_object_or_404(CommcareReport, pk=report_id)
+    metadata = get_object_or_404(
+        ReportMetaData, report=rpt, key="indicator", value=indicator)
+    metadata.delete()
+    return HttpResponseRedirect(
+        reverse(report, kwargs={'report_id': report_id}))

@@ -12,7 +12,9 @@ urlpatterns = patterns('',
     url(r'^$', views.index, name='dashboard'),
     url(r'^report/?$', views.index),
     url(r'^report/(?P<report_id>[^/]+)/$', 'report.views.report'),
-    
+    url(r'^report/(?P<report_id>\d+)/indicator-remove/(?P<indicator>[^/]+)$',
+        'report.views.remove_indicator_from_report', name="remove-indicator"),
+
     url(r'^login/$', 'report.views.login_greeter', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'template_name': 'logout.html', 'next_page': '/'}, name='logout'),
