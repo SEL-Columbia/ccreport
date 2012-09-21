@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     # Examples
     url(r'^$', views.index, name='dashboard'),
     url(r'^report/?$', views.index),
-    
+    url(r'^report/(?P<report_id>[^/]+)/$', 'report.views.report'),
     
     url(r'^login/$', 'report.views.login_greeter', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',

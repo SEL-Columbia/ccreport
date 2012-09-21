@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% if report %}
+{% block page_title %}{{ report.name }}{% endblock %}
+{% endif %}
+
+{% block content %}
+
+{% if report %}
+<h1>{{ report.name }}</h1>
+<div>
+<form method="POST" class="form-inline">
+    {% csrf_token %}
+    <select class="input-large" name="indicator">
+        {% for indicator in indicator_list %}
+            <option value="{{ indicator.name }}">{{ indicator.description }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn">{% trans "Add Indicator to Report" %}</button>
+</form>
+</div>
+    {% if indicators %}
+        <ol>
+        {% for indicator in indicators %}
+            <li>{{ indicator.description }}</li>
+        {% endfor %}
+        </ol>
+    {% endif %}
+
+{% endif %}
+{% endblock %}

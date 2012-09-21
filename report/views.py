@@ -9,11 +9,12 @@ from django.http import HttpResponseNotFound, HttpResponse, \
     HttpResponseRedirect
 from django.views.decorators.http import require_GET, require_POST
 from django.core.urlresolvers import reverse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from report.forms import CommcareReportForm
+from report.indicators import get_indicator_list
 
 from report.models import CommcareReport, ReportMetaData
 from report.utils import download_commcare_zip_report
@@ -22,7 +23,7 @@ from report.utils import dump_json
 from report.indicators.MalariaIndicator import MalariaIndicator
 
 
-@login_required()
+@login_required
 def index(request):
     '''Landing page '''
     context = RequestContext(request)
@@ -71,7 +72,7 @@ def refresh_dataset(request, report_pk):
         return HttpResponseRedirect(reverse(index))
     
 
-@login_required()
+@login_required
 def report_summary(request, report_id):
     
     try:
@@ -99,7 +100,7 @@ def report_summary(request, report_id):
 
 
 @require_POST        
-@login_required()
+@login_required
 def metadata(request, report_id):
     try:
         report = CommcareReport.objects.get(pk=report_id)
@@ -138,7 +139,7 @@ def add_commcare_report(request):
     return render(request, "report-form.html", context_instance=context)
 
         
-@login_required()
+@login_required
 def indicator(request, report_id):
     try:
         report = CommcareReport.objects.get(pk=report_id)
@@ -149,3 +150,26 @@ def indicator(request, report_id):
     m = MalariaIndicator(report)
     context = {"mm": m.report_indicators()}
     return render(request, "indicator.html", context)
+
+
+@login_required
+def report(request, report_id):
+    context = RequestContext(request)
+    report = get_object_or_404(CommcareReport, pk=report_id)
+    if request.POST:
+        indicator = request.POST.get('indicator', None)
+        if indicator is not None:
+            meta_data, created = ReportMetaData.objects.get_or_create(
+                report=report, key='indicator', value=indicator)
+            meta_data.save()
+    indicators = ReportMetaData.objects.filter(
+        report=report, key="indicator").values_list('value', flat=True)
+    indicator_list = get_indicator_list()
+    context.indicators = \
+        [item for item in indicator_list if item['name'] in indicators]
+    # do not include already assigned indicators
+    indicator_list =\
+        [item for item in indicator_list if item['name'] not in indicators]
+    context.indicator_list = indicator_list
+    context.report = report
+    return render(request, 'report.html', context_instance=context)
