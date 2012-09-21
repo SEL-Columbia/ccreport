@@ -112,4 +112,20 @@ class SiteTest(TestCase):
                 value=indicator).count() > 0)
 
     def test_remove_indicator_from_report(self):
-        pass
+        self._add_commcare_report_success()
+        report = CommcareReport.objects.reverse()[0]
+        indicator = 'MalariaIndicator.fever_rdt_positive_indicator'
+        self._add_indicator_to_report(report, indicator)
+        self.assertTrue(
+            ReportMetaData.objects.filter(
+                report=report, key="indicator",
+                value=indicator).count() > 0)
+        url = reverse(
+            views.remove_indicator_from_report,
+            kwargs={'report_id': report.pk, 'indicator': indicator})
+        response = self.client.get(url)
+        self.assertTrue(response.status_code == 302)
+        self.assertTrue(
+            ReportMetaData.objects.filter(
+                report=report, key="indicator",
+                value=indicator).count() == 0)
