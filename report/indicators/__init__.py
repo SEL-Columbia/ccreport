@@ -9,9 +9,11 @@ def get_indicator_list():
     for name, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isclass(obj):
             for n, o in inspect.getmembers(obj):
-                print n, o, type(o)
                 if inspect.ismethod(o) and n.endswith('_indicator'):
                     doc = o.__doc__
-                    _ind = {'class': obj, 'func': o, 'description': doc}
+                    _ind = {
+                        'class': obj, 'func': o, 'description': doc,
+                        'name': obj.__name__ + '.' + o.__name__
+                    }
                     _ind_list.append(_ind)
     return _ind_list
