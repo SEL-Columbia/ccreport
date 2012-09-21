@@ -23,7 +23,7 @@
     {% if indicators %}
         <ol>
         {% for indicator in indicators %}
-            <li>{{ indicator.description }}</li>
+            <li>{{ indicator.description }} <a>{% trans "Remove" %}</a></li>
         {% endfor %}
         </ol>
     {% endif %}

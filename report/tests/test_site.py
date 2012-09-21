@@ -53,6 +53,12 @@ class SiteTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(CommcareReport.objects.all().count(), count + 1)
 
+    def _add_indicator_to_report(self, report, indicator):
+        url = reverse(views.report, kwargs={'report_id': report.pk})
+        post_data = {'indicator': indicator}
+        response = self.client.post(url, post_data)
+        self.assertTrue(response.status_code == 200)
+
     def test_add_cc_report_view(self):
         self._add_commcare_report_success()
 
@@ -97,13 +103,13 @@ class SiteTest(TestCase):
         self._add_commcare_report_success()
         report = CommcareReport.objects.reverse()[0]
         count = ReportMetaData.objects.count()
-        url = reverse(views.report, kwargs={'report_id': report.pk})
-        post_data = {
-            'indicator': 'MalariaIndicator.fever_rdt_positive_indicator'}
-        response = self.client.post(url, post_data)
-        self.assertTrue(response.status_code == 200)
+        indicator = 'MalariaIndicator.fever_rdt_positive_indicator'
+        self._add_indicator_to_report(report, indicator)
         self.assertEqual(ReportMetaData.objects.count(), count + 1)
         self.assertTrue(
             ReportMetaData.objects.filter(
                 report=report, key="indicator",
-                value=post_data['indicator']).count() > 0)
+                value=indicator).count() > 0)
+
+    def test_remove_indicator_from_report(self):
+        pass
