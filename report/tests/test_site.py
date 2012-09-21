@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
 from report import views
-from report.models import CommcareReport
+from report.models import CommcareReport, ReportMetaData
 from report.utils import download_commcare_zip_report
 
 
@@ -92,3 +92,18 @@ class SiteTest(TestCase):
         url = reverse(views.report, kwargs={'report_id': report.pk})
         response = self.client.get(url)
         self.assertTrue(response.status_code == 200)
+
+    def test_add_indicator_to_report(self):
+        self._add_commcare_report_success()
+        report = CommcareReport.objects.reverse()[0]
+        count = ReportMetaData.objects.count()
+        url = reverse(views.report, kwargs={'report_id': report.pk})
+        post_data = {
+            'indicator': 'MalariaIndicator.fever_rdt_positive_indicator'}
+        response = self.client.post(url, post_data)
+        self.assertTrue(response.status_code == 200)
+        self.assertEqual(ReportMetaData.objects.count(), count + 1)
+        self.assertTrue(
+            ReportMetaData.objects.filter(
+                report=report, key="indicator",
+                value=post_data['indicator']).count() > 0)
