@@ -21,6 +21,8 @@ from report.utils import download_commcare_zip_report
 from report.bamboo import bamboo_query, bamboo_store_csv_file
 from report.utils import dump_json
 from report.indicators.MalariaIndicator import MalariaIndicator
+import json
+from ast import literal_eval
 
 
 @login_required
@@ -39,7 +41,7 @@ def login_greeter(request):
     
     return login(request, template_name='login.html', extra_context=context)
 
-
+@login_required
 def refresh_dataset(request, report_pk):
     # download the report csv data from commcare
     try:
@@ -74,26 +76,27 @@ def refresh_dataset(request, report_pk):
 
 @login_required
 def report_summary(request, report_id):
-    
+
     try:
         report = CommcareReport.objects.get(pk=report_id)
     except CommcareReport.DoesNotExist: 
-        pass
+        return HttpResponse(_(u"Unable to download report!"))
 
     #GET SELECT VALUES key
     try:
-        select_values = ReportMetaData.objects.get(pk=report_id, 
-                                                   key='select_values')
+        select_values = ReportMetaData.objects.get(report__pk=report_id, key='select_values')
+        query = bamboo_query(report, as_summary=True,
+                             select={'select':'all'})
         select = True
-        query = bamboo_query(report, select=json.dumps(select_values.value),
-                             as_summary=True)
+        data = dict(literal_eval(select_values.value))
     except ReportMetaData.DoesNotExist:
-        query = bamboo_query(report, as_summary=True)
+        query = bamboo_query(report, as_summary=True,
+                             select={'select':'all'})
+        data = query
         select = False
 
-    print query
     context = {'report': report,
-               'data_dict': query,
+               'data_dict': data,
                'select': select,
                'data_summary': dump_json(query)}
     return render(request, "summary.html", context)
@@ -105,10 +108,11 @@ def metadata(request, report_id):
     try:
         report = CommcareReport.objects.get(pk=report_id)
     except CommcareReport.DoesNotExist: 
-        pass
+        return HttpResponse(_(u"Report not available"))
 
+    #Check if 
     fields = request.POST.getlist('select_fields')
-    d = { i: 1 for i in fields }
+    d = {i.encode('ascii','ignore'):"1" for i in fields }
 
     md = ReportMetaData()
     md.report = report
