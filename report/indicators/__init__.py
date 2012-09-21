@@ -13,7 +13,19 @@ def get_indicator_list():
                     doc = o.__doc__
                     _ind = {
                         'class': obj, 'func': o, 'description': doc,
-                        'name': obj.__name__ + '.' + o.__name__
+                        'name': obj.__name__ + '.' + o.__name__, 'data': ''
                     }
                     _ind_list.append(_ind)
     return _ind_list
+
+def generate_indicators(indicator_list, report):
+    """returns a list of indicators populated with calculations"""
+    if not indicator_list:
+        return []
+    assert type(indicator_list) == list
+    assert 'func' in indicator_list[0]
+    data_list = []
+    for indicator in indicator_list:
+        indicator.update({'data': indicator['func'](report)})
+        data_list.append(indicator)
+    return data_list
